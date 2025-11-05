@@ -1,21 +1,11 @@
 import React, { useState } from 'react';
 
-const UsersTable = () => {
-  const [users, setUsers] = useState([
-    { id: 1, firstName: 'Иван', lastName: 'Иванов', email: 'ivan@gmail.com' },
-    { id: 2, firstName: 'Петр', lastName: 'Петров', email: 'petr@gmail.com' },
-    { id: 3, firstName: 'Мария', lastName: 'Сидорова', email: 'maria@gmail.com' }
-  ]);
-
+const UsersTable = ({ users, onEdit, onDelete, onAddUser }) => {
   const [newUser, setNewUser] = useState({
     firstName: '',
     lastName: '',
     email: ''
   });
-
-  const deleteUser = (id) => {
-    setUsers(users.filter(user => user.id !== id));
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,16 +23,8 @@ const UsersTable = () => {
       return;
     }
 
-    const user = {
-      id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-      firstName: newUser.firstName,
-      lastName: newUser.lastName,
-      email: newUser.email
-    };
-
-    setUsers([...users, user]);
+    onAddUser(newUser);
     
-    // Очищаем форму
     setNewUser({
       firstName: '',
       lastName: '',
@@ -52,9 +34,8 @@ const UsersTable = () => {
 
   return (
     <div className="container">
-      <h1>Пользователи</h1>
+      <h1 style={{margin: '0 0 15px 0', fontSize: '20px'}}>Пользователи - Таблица</h1>
       
-      {/* Форма добавления нового пользователя */}
       <div className="add-user-form">
         <h2>Добавить нового пользователя</h2>
         <form onSubmit={addUser}>
@@ -94,28 +75,41 @@ const UsersTable = () => {
         </form>
       </div>
 
-      {/* Таблица пользователей */}
-      <table>
+      <table style={{
+        width: '100%',
+        borderCollapse: 'collapse',
+        marginTop: '15px',
+        fontSize: '14px'
+      }}>
         <thead>
-          <tr>
-            <th>ID</th>
-            <th>Имя</th>
-            <th>Фамилия</th>
-            <th>Email</th>
-            <th>Действие</th>
+          <tr style={{backgroundColor: '#34495e', color: 'white'}}>
+            <th style={{ padding: '10px', textAlign: 'left' }}>ID</th>
+            <th style={{ padding: '10px', textAlign: 'left' }}>Имя</th>
+            <th style={{ padding: '10px', textAlign: 'left' }}>Фамилия</th>
+            <th style={{ padding: '10px', textAlign: 'left' }}>Email</th>
+            <th style={{ padding: '10px', textAlign: 'left' }}>Действие</th>
           </tr>
         </thead>
         <tbody>
-          {users.map(user => (
-            <tr key={user.id}>
-              <td>{user.id}</td>
-              <td>{user.firstName}</td>
-              <td>{user.lastName}</td>
-              <td>{user.email}</td>
-              <td>
+          {users.map((user, index) => (
+            <tr key={user.id} style={{ 
+              backgroundColor: index % 2 === 0 ? '#f8f9fa' : '#ffffff',
+              borderBottom: '1px solid #ddd'
+            }}>
+              <td style={{ padding: '10px' }}>{user.id}</td>
+              <td style={{ padding: '10px' }}>{user.firstName}</td>
+              <td style={{ padding: '10px' }}>{user.lastName}</td>
+              <td style={{ padding: '10px' }}>{user.email}</td>
+              <td style={{ padding: '10px' }}>
+                <button 
+                  className="edit-btn"
+                  onClick={() => onEdit(user)}
+                >
+                  Редактировать
+                </button>
                 <button 
                   className="delete-btn"
-                  onClick={() => deleteUser(user.id)}
+                  onClick={() => onDelete(user.id)}
                 >
                   Удалить
                 </button>
