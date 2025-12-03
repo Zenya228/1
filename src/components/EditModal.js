@@ -1,36 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { updateUser } from '../store/actions/userActions.js';
+import EditUserForm from '../forms/EditUserForm.js';
 
 const EditModal = ({ user, isOpen, onClose }) => {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: ''
-  });
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email
-      });
-    }
-  }, [user]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(updateUser(user.id, formData));
+  const handleSave = (userId, userData) => {
+    dispatch(updateUser(userId, userData));
     onClose();
   };
 
@@ -59,57 +36,11 @@ const EditModal = ({ user, isOpen, onClose }) => {
         <h2 style={{margin: '0 0 15px 0', fontSize: '18px'}}>
           Редактировать пользователя
         </h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label style={{display: 'block', marginBottom: '5px', fontSize: '14px'}}>
-              Имя:
-            </label>
-            <input
-              type="text"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label style={{display: 'block', marginBottom: '5px', fontSize: '14px'}}>
-              Фамилия:
-            </label>
-            <input
-              type="text"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label style={{display: 'block', marginBottom: '5px', fontSize: '14px'}}>
-              Email:
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-            <button type="submit" className="add-btn" style={{flex: 1}}>
-              Сохранить
-            </button>
-            <button 
-              type="button" 
-              className="delete-btn"
-              onClick={onClose}
-              style={{flex: 1}}
-            >
-              Отмена
-            </button>
-          </div>
-        </form>
+        <EditUserForm
+          user={user}
+          onSubmit={handleSave}
+          onCancel={onClose}
+        />
       </div>
     </div>
   );

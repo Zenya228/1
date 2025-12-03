@@ -1,45 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { addUser, deleteUser } from '../store/actions/userActions.js';
+import AddUserForm from '../forms/AddUserForm.js';
 
 const UsersCards = ({ onEdit }) => {
-  const [newUser, setNewUser] = useState({
-    firstName: '',
-    lastName: '',
-    email: ''
-  });
-
   const users = useSelector(state => state.user.users);
   const dispatch = useDispatch();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewUser(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
-  const handleAddUser = (e) => {
-    e.preventDefault();
-    
-    if (!newUser.firstName.trim() || !newUser.lastName.trim() || !newUser.email.trim()) {
-      alert('Пожалуйста, заполните все поля');
-      return;
-    }
-
+  const handleAddUser = (userData) => {
     const user = {
       id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-      ...newUser
+      ...userData
     };
-
     dispatch(addUser(user));
-    
-    setNewUser({
-      firstName: '',
-      lastName: '',
-      email: ''
-    });
   };
 
   const handleDeleteUser = (id) => {
@@ -50,44 +23,7 @@ const UsersCards = ({ onEdit }) => {
     <div className="container">
       <h1 style={{margin: '0 0 15px 0', fontSize: '20px'}}>Пользователи - Карточки</h1>
       
-      <div className="add-user-form">
-        <h2>Добавить нового пользователя</h2>
-        <form onSubmit={handleAddUser}>
-          <div className="form-group">
-            <input
-              type="text"
-              name="firstName"
-              placeholder="Имя"
-              value={newUser.firstName}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <input
-              type="text"
-              name="lastName"
-              placeholder="Фамилия"
-              value={newUser.lastName}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={newUser.email}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <button type="submit" className="add-btn">
-            Добавить пользователя
-          </button>
-        </form>
-      </div>
+      <AddUserForm onSubmit={handleAddUser} />
 
       <div style={{
         display: 'grid',
