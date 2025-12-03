@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from '../store/actions/authActions.js';
 import './Login.css';
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  // Данные аккаунтов пользователей
   const accounts = {
     'admin': 'admin123',
     'user': 'user123',
@@ -23,7 +27,7 @@ const Login = ({ onLogin }) => {
     }
 
     if (accounts[username] && accounts[username] === password) {
-      onLogin(username);
+      dispatch(loginSuccess(username));
       navigate('/users');
     } else {
       setError('Неверный логин или пароль');

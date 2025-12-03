@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { updateUser } from '../store/actions/userActions.js';
 
-const EditModal = ({ user, isOpen, onSave, onClose }) => {
+const EditModal = ({ user, isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: ''
   });
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (user) {
@@ -27,7 +30,8 @@ const EditModal = ({ user, isOpen, onSave, onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(user.id, formData);
+    dispatch(updateUser(user.id, formData));
+    onClose();
   };
 
   if (!isOpen) return null;

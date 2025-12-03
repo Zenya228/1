@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { addUser, deleteUser } from '../store/actions/userActions.js';
 
-const UsersCards = ({ users, onEdit, onDelete, onAddUser }) => {
+const UsersCards = ({ onEdit }) => {
   const [newUser, setNewUser] = useState({
     firstName: '',
     lastName: '',
     email: ''
   });
+
+  const users = useSelector(state => state.user.users);
+  const dispatch = useDispatch();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -15,7 +20,7 @@ const UsersCards = ({ users, onEdit, onDelete, onAddUser }) => {
     }));
   };
 
-  const addUser = (e) => {
+  const handleAddUser = (e) => {
     e.preventDefault();
     
     if (!newUser.firstName.trim() || !newUser.lastName.trim() || !newUser.email.trim()) {
@@ -23,7 +28,12 @@ const UsersCards = ({ users, onEdit, onDelete, onAddUser }) => {
       return;
     }
 
-    onAddUser(newUser);
+    const user = {
+      id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+      ...newUser
+    };
+
+    dispatch(addUser(user));
     
     setNewUser({
       firstName: '',
@@ -32,13 +42,17 @@ const UsersCards = ({ users, onEdit, onDelete, onAddUser }) => {
     });
   };
 
+  const handleDeleteUser = (id) => {
+    dispatch(deleteUser(id));
+  };
+
   return (
     <div className="container">
       <h1 style={{margin: '0 0 15px 0', fontSize: '20px'}}>Пользователи - Карточки</h1>
       
       <div className="add-user-form">
         <h2>Добавить нового пользователя</h2>
-        <form onSubmit={addUser}>
+        <form onSubmit={handleAddUser}>
           <div className="form-group">
             <input
               type="text"
@@ -107,7 +121,7 @@ const UsersCards = ({ users, onEdit, onDelete, onAddUser }) => {
               </button>
               <button 
                 className="delete-btn"
-                onClick={() => onDelete(user.id)}
+                onClick={() => handleDeleteUser(user.id)}
               >
                 Удалить
               </button>
