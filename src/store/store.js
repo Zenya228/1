@@ -1,9 +1,15 @@
-import { createStore } from 'redux';
-import rootReducer from './reducers/rootReducer.js';
+import { configureStore } from '@reduxjs/toolkit';
+import userReducer from './slices/userSlice.js';
+import authReducer from './slices/authSlice.js';
+import themeReducer from './slices/themeSlice.js';
 
-const store = createStore(
-  rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
+const store = configureStore({
+  reducer: {
+    user: userReducer,
+    auth: authReducer,
+    theme: themeReducer
+  },
+  devTools: process.env.NODE_ENV !== 'production'
+});
 
 export default store;

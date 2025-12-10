@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const AddUserForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -6,6 +7,8 @@ const AddUserForm = ({ onSubmit }) => {
     lastName: '',
     email: ''
   });
+
+  const { colors } = useSelector(state => state.theme);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,7 +28,6 @@ const AddUserForm = ({ onSubmit }) => {
 
     onSubmit(formData);
     
-    // Очищаем форму
     setFormData({
       firstName: '',
       lastName: '',
@@ -34,10 +36,23 @@ const AddUserForm = ({ onSubmit }) => {
   };
 
   return (
-    <div className="add-user-form">
-      <h2>Добавить нового пользователя</h2>
+    <div className="add-user-form" style={{
+      backgroundColor: colors.surface,
+      padding: '15px',
+      borderRadius: '4px',
+      marginBottom: '15px',
+      border: `1px solid ${colors.border}`
+    }}>
+      <h2 style={{ 
+        margin: '0 0 15px 0', 
+        fontSize: '18px', 
+        color: colors.text,
+        fontWeight: 'bold' 
+      }}>
+        Добавить нового пользователя
+      </h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <div className="form-group" style={{ marginBottom: '10px' }}>
           <input
             type="text"
             name="firstName"
@@ -45,9 +60,19 @@ const AddUserForm = ({ onSubmit }) => {
             value={formData.firstName}
             onChange={handleChange}
             required
+            style={{
+              width: '100%',
+              padding: '8px',
+              border: `1px solid ${colors.border}`,
+              borderRadius: '4px',
+              fontSize: '14px',
+              boxSizing: 'border-box',
+              backgroundColor: colors.surface,
+              color: colors.text
+            }}
           />
         </div>
-        <div className="form-group">
+        <div className="form-group" style={{ marginBottom: '10px' }}>
           <input
             type="text"
             name="lastName"
@@ -55,9 +80,19 @@ const AddUserForm = ({ onSubmit }) => {
             value={formData.lastName}
             onChange={handleChange}
             required
+            style={{
+              width: '100%',
+              padding: '8px',
+              border: `1px solid ${colors.border}`,
+              borderRadius: '4px',
+              fontSize: '14px',
+              boxSizing: 'border-box',
+              backgroundColor: colors.surface,
+              color: colors.text
+            }}
           />
         </div>
-        <div className="form-group">
+        <div className="form-group" style={{ marginBottom: '10px' }}>
           <input
             type="email"
             name="email"
@@ -65,9 +100,29 @@ const AddUserForm = ({ onSubmit }) => {
             value={formData.email}
             onChange={handleChange}
             required
+            style={{
+              width: '100%',
+              padding: '8px',
+              border: `1px solid ${colors.border}`,
+              borderRadius: '4px',
+              fontSize: '14px',
+              boxSizing: 'border-box',
+              backgroundColor: colors.surface,
+              color: colors.text
+            }}
           />
         </div>
-        <button type="submit" className="add-btn">
+        <button type="submit" className="add-btn" style={{
+          backgroundColor: colors.secondary,
+          color: colors.buttonText,
+          border: 'none',
+          padding: '10px',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          fontSize: '14px',
+          width: '100%',
+          fontWeight: 'bold'
+        }}>
           Добавить пользователя
         </button>
       </form>

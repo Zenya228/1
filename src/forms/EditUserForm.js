@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 const EditUserForm = ({ user, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -6,6 +7,8 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
     lastName: '',
     email: ''
   });
+
+  const { colors } = useSelector(state => state.theme);
 
   useEffect(() => {
     if (user) {
@@ -32,8 +35,8 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="form-group">
-        <label style={{display: 'block', marginBottom: '5px', fontSize: '14px'}}>
+      <div className="form-group" style={{ marginBottom: '15px' }}>
+        <label style={{display: 'block', marginBottom: '5px', fontSize: '14px', color: colors.heading, fontWeight: 'bold'}}>
           Имя:
         </label>
         <input
@@ -42,10 +45,20 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
           value={formData.firstName}
           onChange={handleChange}
           required
+          style={{
+            width: '100%',
+            padding: '10px',
+            border: `1px solid ${colors.border}`,
+            borderRadius: '5px',
+            fontSize: '16px',
+            boxSizing: 'border-box',
+            backgroundColor: colors.surface,
+            color: colors.text
+          }}
         />
       </div>
-      <div className="form-group">
-        <label style={{display: 'block', marginBottom: '5px', fontSize: '14px'}}>
+      <div className="form-group" style={{ marginBottom: '15px' }}>
+        <label style={{display: 'block', marginBottom: '5px', fontSize: '14px', color: colors.heading, fontWeight: 'bold'}}>
           Фамилия:
         </label>
         <input
@@ -54,10 +67,20 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
           value={formData.lastName}
           onChange={handleChange}
           required
+          style={{
+            width: '100%',
+            padding: '10px',
+            border: `1px solid ${colors.border}`,
+            borderRadius: '5px',
+            fontSize: '16px',
+            boxSizing: 'border-box',
+            backgroundColor: colors.surface,
+            color: colors.text
+          }}
         />
       </div>
-      <div className="form-group">
-        <label style={{display: 'block', marginBottom: '5px', fontSize: '14px'}}>
+      <div className="form-group" style={{ marginBottom: '15px' }}>
+        <label style={{display: 'block', marginBottom: '5px', fontSize: '14px', color: colors.heading, fontWeight: 'bold'}}>
           Email:
         </label>
         <input
@@ -66,17 +89,47 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
           value={formData.email}
           onChange={handleChange}
           required
+          style={{
+            width: '100%',
+            padding: '10px',
+            border: `1px solid ${colors.border}`,
+            borderRadius: '5px',
+            fontSize: '16px',
+            boxSizing: 'border-box',
+            backgroundColor: colors.surface,
+            color: colors.text
+          }}
         />
       </div>
-      <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-        <button type="submit" className="add-btn" style={{flex: 1}}>
+      <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+        <button type="submit" className="save-btn" style={{
+          flex: 1,
+          backgroundColor: colors.secondary,
+          color: colors.buttonText,
+          border: 'none',
+          padding: '12px',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          fontSize: '16px',
+          fontWeight: 'bold'
+        }}>
           Сохранить
         </button>
         <button 
           type="button" 
-          className="delete-btn"
+          className="cancel-btn"
           onClick={onCancel}
-          style={{flex: 1}}
+          style={{
+            flex: 1,
+            backgroundColor: colors.error,
+            color: colors.buttonText,
+            border: 'none',
+            padding: '12px',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold'
+          }}
         >
           Отмена
         </button>
