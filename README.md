@@ -35,3 +35,4 @@ src/
 ## Запуск:
 npm install
 npm start
+# strwp
