@@ -1,116 +1,98 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  Box,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Button,
-  Typography,
-} from '@mui/material';
-import { addUser, deleteUser } from '../store/slices/userSlice.js';
-import AddUserForm from '../forms/AddUserForm.js';
-import ValidationDialog from './ValidationDialog.js';
+// Добавьте в импорты
+import { useState } from 'react';
+import ConfirmDeleteModal from './ConfirmDeleteModal';
+import UserDetailsModal from './UserDetailsModal';
+import BulkActionsModal from './BulkActionsModal';
 
+// В компоненте UsersTable добавьте состояния
 const UsersTable = ({ onEdit }) => {
-  const users = useSelector(state => state.user.users);
-  const dispatch = useDispatch();
-  const [validationErrors, setValidationErrors] = useState([]);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [bulkModalOpen, setBulkModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userToDelete, setUserToDelete] = useState(null);
 
-  const handleAddUser = (userData) => {
-    const user = {
-      id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-      ...userData
-    };
-    dispatch(addUser(user));
+  const handleDeleteClick = (user) => {
+    setUserToDelete(user);
+    setDeleteModalOpen(true);
   };
 
-  const handleShowValidationDialog = (errors) => {
-    setValidationErrors(errors);
-    setDialogOpen(true);
+  const handleDetailsClick = (user) => {
+    setSelectedUser(user);
+    setDetailsModalOpen(true);
   };
 
-  const handleDeleteUser = (id) => {
-    dispatch(deleteUser(id));
+  const handleConfirmDelete = () => {
+    if (userToDelete) {
+      dispatch(deleteUser(userToDelete.id));
+    }
   };
 
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
-    setValidationErrors([]);
+  const handleBulkAction = (action, userIds) => {
+    console.log(`Выполняется действие "${action}" для пользователей:`, userIds);
+    // Реализуйте логику массовых действий
   };
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom sx={{ mb: 3 }}>
-        Пользователи - Таблица
-      </Typography>
-      
-      <AddUserForm 
-        onSubmit={handleAddUser}
-        showValidationDialog={handleShowValidationDialog}
+      {/* Добавьте кнопку для массовых действий */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <Typography variant="h4">Пользователи - Таблица</Typography>
+        <Button
+          variant="outlined"
+          onClick={() => setBulkModalOpen(true)}
+        >
+          Массовые действия
+        </Button>
+      </Box>
+
+      {/* В таблице добавьте кнопку просмотра и измените удаление */}
+      <TableCell>
+        <IconButton
+          onClick={() => handleDetailsClick(user)}
+          color="info"
+          size="small"
+          sx={{ mr: 1 }}
+        >
+          <VisibilityIcon />
+        </IconButton>
+        <Button
+          variant="contained"
+          size="small"
+          onClick={() => onEdit(user)}
+          sx={{ mr: 1 }}
+        >
+          Редактировать
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          size="small"
+          onClick={() => handleDeleteClick(user)}
+        >
+          Удалить
+        </Button>
+      </TableCell>
+
+      {/* Добавьте модалки в конец компонента */}
+      <ConfirmDeleteModal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
       />
 
-      <ValidationDialog
-        open={dialogOpen}
-        errors={validationErrors}
-        onClose={handleCloseDialog}
+      <UserDetailsModal
+        open={detailsModalOpen}
+        onClose={() => setDetailsModalOpen(false)}
+        user={selectedUser}
       />
 
-      <TableContainer component={Paper} sx={{ mt: 3 }}>
-        <Table>
-          <TableHead>
-            <TableRow sx={{ bgcolor: 'primary.main' }}>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>ID</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Имя</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Фамилия</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Email</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Время приема</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Действие</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow 
-                key={user.id} 
-                hover
-                sx={{ '&:nth-of-type(odd)': { bgcolor: 'action.hover' } }}
-              >
-                <TableCell>{user.id}</TableCell>
-                <TableCell>{user.firstName}</TableCell>
-                <TableCell>{user.lastName}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.appointmentTime || 'Не указано'}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => onEdit(user)}
-                    sx={{ mr: 1 }}
-                    size="small"
-                  >
-                    Редактировать
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => handleDeleteUser(user.id)}
-                    size="small"
-                  >
-                    Удалить
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <BulkActionsModal
+        open={bulkModalOpen}
+        onClose={() => setBulkModalOpen(false)}
+        users={users}
+        onAction={handleBulkAction}
+      />
     </Box>
   );
 };
-
-export default UsersTable;
