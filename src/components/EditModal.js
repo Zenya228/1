@@ -1,17 +1,33 @@
 import React from 'react';
+<<<<<<< HEAD
 import { useDispatch, useSelector } from 'react-redux';
+=======
+import { useDispatch } from 'react-redux';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton,
+  Box,
+} from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
+>>>>>>> 07d062e (MUI темами)
 import { updateUser } from '../store/slices/userSlice.js';
 import EditUserForm from '../forms/EditUserForm.js';
 
 const EditModal = ({ user, isOpen, onClose }) => {
   const dispatch = useDispatch();
+<<<<<<< HEAD
   const { colors } = useSelector(state => state.theme);
+=======
+>>>>>>> 07d062e (MUI темами)
 
   const handleSave = (userId, userData) => {
     dispatch(updateUser({ id: userId, userData }));
     onClose();
   };
 
+<<<<<<< HEAD
   if (!isOpen) return null;
 
   return (
@@ -45,13 +61,49 @@ const EditModal = ({ user, isOpen, onClose }) => {
         }}>
           Редактировать пользователя
         </h2>
+=======
+  return (
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: 2,
+        }
+      }}
+    >
+      <DialogTitle sx={{ 
+        bgcolor: 'primary.main', 
+        color: 'white',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        Редактировать пользователя
+        <IconButton
+          onClick={onClose}
+          sx={{ color: 'white' }}
+          size="small"
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent sx={{ pt: 3 }}>
+>>>>>>> 07d062e (MUI темами)
         <EditUserForm
           user={user}
           onSubmit={handleSave}
           onCancel={onClose}
         />
+<<<<<<< HEAD
       </div>
     </div>
+=======
+      </DialogContent>
+    </Dialog>
+>>>>>>> 07d062e (MUI темами)
   );
 };
 

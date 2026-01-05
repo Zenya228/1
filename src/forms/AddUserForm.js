@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
+<<<<<<< HEAD
 import { useSelector } from 'react-redux';
+=======
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Paper,
+} from '@mui/material';
+>>>>>>> 07d062e (MUI темами)
 
 const AddUserForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -8,8 +18,11 @@ const AddUserForm = ({ onSubmit }) => {
     email: ''
   });
 
+<<<<<<< HEAD
   const { colors } = useSelector(state => state.theme);
 
+=======
+>>>>>>> 07d062e (MUI темами)
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
@@ -36,6 +49,7 @@ const AddUserForm = ({ onSubmit }) => {
   };
 
   return (
+<<<<<<< HEAD
     <div className="add-user-form" style={{
       backgroundColor: colors.surface,
       padding: '15px',
@@ -127,6 +141,57 @@ const AddUserForm = ({ onSubmit }) => {
         </button>
       </form>
     </div>
+=======
+    <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
+      <Typography variant="h6" gutterBottom>
+        Добавить нового пользователя
+      </Typography>
+      <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <TextField
+          name="firstName"
+          label="Имя"
+          value={formData.firstName}
+          onChange={handleChange}
+          required
+          fullWidth
+          variant="outlined"
+          size="small"
+        />
+        
+        <TextField
+          name="lastName"
+          label="Фамилия"
+          value={formData.lastName}
+          onChange={handleChange}
+          required
+          fullWidth
+          variant="outlined"
+          size="small"
+        />
+        
+        <TextField
+          name="email"
+          type="email"
+          label="Email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+          fullWidth
+          variant="outlined"
+          size="small"
+        />
+        
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+        >
+          Добавить пользователя
+        </Button>
+      </Box>
+    </Paper>
+>>>>>>> 07d062e (MUI темами)
   );
 };
 

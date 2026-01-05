@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import { useSelector } from 'react-redux';
+=======
+import {
+  Box,
+  TextField,
+  Button,
+  Grid,
+} from '@mui/material';
+>>>>>>> 07d062e (MUI темами)
 
 const EditUserForm = ({ user, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -8,8 +17,11 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
     email: ''
   });
 
+<<<<<<< HEAD
   const { colors } = useSelector(state => state.theme);
 
+=======
+>>>>>>> 07d062e (MUI темами)
   useEffect(() => {
     if (user) {
       setFormData({
@@ -34,6 +46,7 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
   };
 
   return (
+<<<<<<< HEAD
     <form onSubmit={handleSubmit}>
       <div className="form-group" style={{ marginBottom: '15px' }}>
         <label style={{display: 'block', marginBottom: '5px', fontSize: '14px', color: colors.heading, fontWeight: 'bold'}}>
@@ -135,6 +148,69 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
         </button>
       </div>
     </form>
+=======
+    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+      <TextField
+        name="firstName"
+        label="Имя"
+        value={formData.firstName}
+        onChange={handleChange}
+        required
+        fullWidth
+        margin="normal"
+        variant="outlined"
+      />
+      
+      <TextField
+        name="lastName"
+        label="Фамилия"
+        value={formData.lastName}
+        onChange={handleChange}
+        required
+        fullWidth
+        margin="normal"
+        variant="outlined"
+      />
+      
+      <TextField
+        name="email"
+        type="email"
+        label="Email"
+        value={formData.email}
+        onChange={handleChange}
+        required
+        fullWidth
+        margin="normal"
+        variant="outlined"
+      />
+      
+      <Grid container spacing={2} sx={{ mt: 3 }}>
+        <Grid item xs={6}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            size="large"
+          >
+            Сохранить
+          </Button>
+        </Grid>
+        <Grid item xs={6}>
+          <Button
+            type="button"
+            variant="contained"
+            color="error"
+            onClick={onCancel}
+            fullWidth
+            size="large"
+          >
+            Отмена
+          </Button>
+        </Grid>
+      </Grid>
+    </Box>
+>>>>>>> 07d062e (MUI темами)
   );
 };
 

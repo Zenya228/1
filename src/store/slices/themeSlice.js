@@ -4,6 +4,7 @@ const themeSlice = createSlice({
   name: 'theme',
   initialState: {
     isDarkTheme: false,
+<<<<<<< HEAD
     colors: {
       background: '#f8f9fa',
       surface: '#ffffff',
@@ -18,10 +19,13 @@ const themeSlice = createSlice({
       buttonText: '#ffffff',
       headerText: '#ffffff'
     }
+=======
+>>>>>>> 07d062e (MUI темами)
   },
   reducers: {
     toggleTheme: (state) => {
       state.isDarkTheme = !state.isDarkTheme;
+<<<<<<< HEAD
       
       if (state.isDarkTheme) {
         state.colors = {
@@ -54,6 +58,8 @@ const themeSlice = createSlice({
           headerText: '#ffffff'
         };
       }
+=======
+>>>>>>> 07d062e (MUI темами)
     }
   }
 });

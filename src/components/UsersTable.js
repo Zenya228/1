@@ -1,11 +1,29 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+<<<<<<< HEAD
+=======
+import {
+  Box,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Button,
+  Typography,
+} from '@mui/material';
+>>>>>>> 07d062e (MUI темами)
 import { addUser, deleteUser } from '../store/slices/userSlice.js';
 import AddUserForm from '../forms/AddUserForm.js';
 
 const UsersTable = ({ onEdit }) => {
   const users = useSelector(state => state.user.users);
+<<<<<<< HEAD
   const { colors } = useSelector(state => state.theme);
+=======
+>>>>>>> 07d062e (MUI темами)
   const dispatch = useDispatch();
 
   const handleAddUser = (userData) => {
@@ -21,6 +39,7 @@ const UsersTable = ({ onEdit }) => {
   };
 
   return (
+<<<<<<< HEAD
     <div className="container" style={{
       background: colors.surface,
       color: colors.text,
@@ -107,6 +126,62 @@ const UsersTable = ({ onEdit }) => {
         </tbody>
       </table>
     </div>
+=======
+    <Box>
+      <Typography variant="h4" gutterBottom sx={{ mb: 3 }}>
+        Пользователи - Таблица
+      </Typography>
+      
+      <AddUserForm onSubmit={handleAddUser} />
+
+      <TableContainer component={Paper} sx={{ mt: 3 }}>
+        <Table>
+          <TableHead>
+            <TableRow sx={{ bgcolor: 'primary.main' }}>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>ID</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Имя</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Фамилия</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Email</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Действие</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {users.map((user) => (
+              <TableRow 
+                key={user.id} 
+                hover
+                sx={{ '&:nth-of-type(odd)': { bgcolor: 'action.hover' } }}
+              >
+                <TableCell>{user.id}</TableCell>
+                <TableCell>{user.firstName}</TableCell>
+                <TableCell>{user.lastName}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => onEdit(user)}
+                    sx={{ mr: 1 }}
+                    size="small"
+                  >
+                    Редактировать
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => handleDeleteUser(user.id)}
+                    size="small"
+                  >
+                    Удалить
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
+>>>>>>> 07d062e (MUI темами)
   );
 };
 

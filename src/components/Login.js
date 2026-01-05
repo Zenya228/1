@@ -1,17 +1,35 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import { useDispatch, useSelector } from 'react-redux';
 import { loginSuccess } from '../store/slices/authSlice.js';
 import ThemeToggle from './ThemeToggle.js';
 import LoginForm from '../forms/LoginForm.js';
 import './Login.css';
+=======
+import { useDispatch } from 'react-redux';
+import {
+  Box,
+  Container,
+  Typography,
+  Paper,
+  AppBar,
+  Toolbar,
+} from '@mui/material';
+import { loginSuccess } from '../store/slices/authSlice.js';
+import ThemeToggle from './ThemeToggle.js';
+import LoginForm from '../forms/LoginForm.js';
+>>>>>>> 07d062e (MUI темами)
 
 const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+<<<<<<< HEAD
   
   const { colors } = useSelector(state => state.theme);
+=======
+>>>>>>> 07d062e (MUI темами)
 
   const accounts = {
     'admin': 'admin123',
@@ -34,6 +52,7 @@ const Login = () => {
   };
 
   return (
+<<<<<<< HEAD
     <div className="login-container" style={{ 
       background: colors.background,
       minHeight: '100vh'
@@ -63,6 +82,31 @@ const Login = () => {
         />
       </div>
     </div>
+=======
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Система управления пользователями
+          </Typography>
+          <ThemeToggle />
+        </Toolbar>
+      </AppBar>
+      
+      <Container 
+        maxWidth="sm" 
+        sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          minHeight: 'calc(100vh - 64px)',
+          py: 4
+        }}
+      >
+        <LoginForm onSubmit={handleLogin} error={error} />
+      </Container>
+    </Box>
+>>>>>>> 07d062e (MUI темами)
   );
 };
 

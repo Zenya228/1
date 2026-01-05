@@ -1,9 +1,15 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+<<<<<<< HEAD
+=======
+import { IconButton, Tooltip } from '@mui/material';
+import { LightMode, DarkMode } from '@mui/icons-material';
+>>>>>>> 07d062e (MUI темами)
 import { toggleTheme } from '../store/slices/themeSlice.js';
 
 const ThemeToggle = () => {
   const dispatch = useDispatch();
+<<<<<<< HEAD
   const { isDarkTheme, colors } = useSelector(state => state.theme);
 
   const handleToggle = () => {
@@ -41,6 +47,19 @@ const ThemeToggle = () => {
         </>
       )}
     </button>
+=======
+  const { isDarkTheme } = useSelector(state => state.theme);
+
+  return (
+    <Tooltip title={isDarkTheme ? "Светлая тема" : "Темная тема"}>
+      <IconButton
+        onClick={() => dispatch(toggleTheme())}
+        color="inherit"
+      >
+        {isDarkTheme ? <LightMode /> : <DarkMode />}
+      </IconButton>
+    </Tooltip>
+>>>>>>> 07d062e (MUI темами)
   );
 };
 

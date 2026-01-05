@@ -1,6 +1,7 @@
 {
   "name": "simple-users-app",
   "version": "1.0.0",
+<<<<<<< HEAD
   "type": "module",
   "scripts": {
     "start": "react-scripts start",
@@ -8,6 +9,18 @@
     "deploy": "npm run build && serve -s build -l 8080"
   },
   "dependencies": {
+=======
+  
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.20",
+    "@mui/material": "^5.14.20",
+>>>>>>> 07d062e (MUI темами)
     "@reduxjs/toolkit": "^2.11.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -28,4 +41,8 @@
       "last 1 safari version"
     ]
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 07d062e (MUI темами)
