@@ -1,184 +1,253 @@
-import React, { useState } from 'react';
-<<<<<<< HEAD
-import { useSelector } from 'react-redux';
-=======
+import React from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import {
   Box,
   TextField,
   Button,
   Typography,
   Paper,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
->>>>>>> 07d062e (MUI темами)
+import { useState, useEffect } from 'react';
 
-const AddUserForm = ({ onSubmit }) => {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: ''
-  });
+// Сервис для загрузки констант валидации (имитация API)
+const ValidationService = {
+  getValidationRules: () => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          minNameLength: 2,
+          maxNameLength: 50,
+          emailDomains: ['gmail.com', 'mail.ru', 'yandex.ru'],
+          businessHours: {
+            morning: { start: '08:30', end: '11:30' },
+            afternoon: { start: '12:30', end: '16:00' }
+          }
+        });
+      }, 500);
+    });
+  }
+};
 
-<<<<<<< HEAD
-  const { colors } = useSelector(state => state.theme);
+const AddUserForm = ({ onSubmit, showValidationDialog }) => {
+  const [validationRules, setValidationRules] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-=======
->>>>>>> 07d062e (MUI темами)
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // Загружаем правила валидации из "сервиса"
+  useEffect(() => {
+    const loadRules = async () => {
+      setLoading(true);
+      try {
+        const rules = await ValidationService.getValidationRules();
+        setValidationRules(rules);
+      } catch (error) {
+        console.error('Ошибка загрузки правил валидации:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim()) {
-      alert('Пожалуйста, заполните все поля');
-      return;
-    }
+    loadRules();
+  }, []);
 
-    onSubmit(formData);
+  // Схема валидации с динамическими правилами
+  const validationSchema = React.useMemo(() => {
+    if (!validationRules) return Yup.object({});
     
-    setFormData({
+    return Yup.object({
+      firstName: Yup.string()
+        .min(validationRules.minNameLength, `Имя должно содержать минимум ${validationRules.minNameLength} символа`)
+        .max(validationRules.maxNameLength, `Имя должно содержать максимум ${validationRules.maxNameLength} символов`)
+        .required('Обязательное поле')
+        .matches(/^[a-zA-Zа-яА-ЯёЁ\s-]+$/, 'Имя может содержать только буквы и дефис'),
+      
+      lastName: Yup.string()
+        .min(validationRules.minNameLength, `Фамилия должна содержать минимум ${validationRules.minNameLength} символа`)
+        .max(validationRules.maxNameLength, `Фамилия должна содержать максимум ${validationRules.maxNameLength} символов`)
+        .required('Обязательное поле')
+        .matches(/^[a-zA-Zа-яА-ЯёЁ\s-]+$/, 'Фамилия может содержать только буквы и дефис'),
+      
+      email: Yup.string()
+        .email('Введите корректный email')
+        .required('Обязательное поле')
+        .test('domain-check', 'Допустимые домены: gmail.com, mail.ru, yandex.ru', (value) => {
+          if (!value) return true;
+          const domain = value.split('@')[1];
+          return validationRules.emailDomains.includes(domain);
+        }),
+      
+      appointmentTime: Yup.string()
+        .required('Выберите время приема')
+        .test('business-hours', 'Время приема должно быть в рабочее время (8:30-11:30 или 12:30-16:00)', (value) => {
+          if (!value) return false;
+          const time = value;
+          const { morning, afternoon } = validationRules.businessHours;
+          return (time >= morning.start && time <= morning.end) || 
+                 (time >= afternoon.start && time <= afternoon.end);
+        })
+    });
+  }, [validationRules]);
+
+  const formik = useFormik({
+    initialValues: {
       firstName: '',
       lastName: '',
-      email: ''
-    });
+      email: '',
+      appointmentTime: '',
+    },
+    validationSchema,
+    onSubmit: (values, { resetForm }) => {
+      onSubmit(values);
+      resetForm();
+    },
+  });
+
+  const handleSubmitWithValidation = async (e) => {
+    e.preventDefault();
+    const errors = await formik.validateForm();
+    
+    if (Object.keys(errors).length > 0) {
+      // Показываем диалоговое окно с ошибками
+      showValidationDialog(Object.values(errors));
+    } else {
+      formik.handleSubmit(e);
+    }
   };
 
+  if (loading) {
+    return (
+      <Paper elevation={2} sx={{ p: 3, mb: 3, textAlign: 'center' }}>
+        <CircularProgress />
+        <Typography sx={{ mt: 2 }}>Загрузка правил валидации...</Typography>
+      </Paper>
+    );
+  }
+
   return (
-<<<<<<< HEAD
-    <div className="add-user-form" style={{
-      backgroundColor: colors.surface,
-      padding: '15px',
-      borderRadius: '4px',
-      marginBottom: '15px',
-      border: `1px solid ${colors.border}`
-    }}>
-      <h2 style={{ 
-        margin: '0 0 15px 0', 
-        fontSize: '18px', 
-        color: colors.text,
-        fontWeight: 'bold' 
-      }}>
-        Добавить нового пользователя
-      </h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group" style={{ marginBottom: '10px' }}>
-          <input
-            type="text"
-            name="firstName"
-            placeholder="Имя"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
-            style={{
-              width: '100%',
-              padding: '8px',
-              border: `1px solid ${colors.border}`,
-              borderRadius: '4px',
-              fontSize: '14px',
-              boxSizing: 'border-box',
-              backgroundColor: colors.surface,
-              color: colors.text
-            }}
-          />
-        </div>
-        <div className="form-group" style={{ marginBottom: '10px' }}>
-          <input
-            type="text"
-            name="lastName"
-            placeholder="Фамилия"
-            value={formData.lastName}
-            onChange={handleChange}
-            required
-            style={{
-              width: '100%',
-              padding: '8px',
-              border: `1px solid ${colors.border}`,
-              borderRadius: '4px',
-              fontSize: '14px',
-              boxSizing: 'border-box',
-              backgroundColor: colors.surface,
-              color: colors.text
-            }}
-          />
-        </div>
-        <div className="form-group" style={{ marginBottom: '10px' }}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            style={{
-              width: '100%',
-              padding: '8px',
-              border: `1px solid ${colors.border}`,
-              borderRadius: '4px',
-              fontSize: '14px',
-              boxSizing: 'border-box',
-              backgroundColor: colors.surface,
-              color: colors.text
-            }}
-          />
-        </div>
-        <button type="submit" className="add-btn" style={{
-          backgroundColor: colors.secondary,
-          color: colors.buttonText,
-          border: 'none',
-          padding: '10px',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontSize: '14px',
-          width: '100%',
-          fontWeight: 'bold'
-        }}>
-          Добавить пользователя
-        </button>
-      </form>
-    </div>
-=======
     <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
       <Typography variant="h6" gutterBottom>
         Добавить нового пользователя
       </Typography>
-      <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      
+      {validationRules && (
+        <Alert severity="info" sx={{ mb: 2 }}>
+          Правила валидации загружены из сервиса
+        </Alert>
+      )}
+      
+      <Box component="form" onSubmit={handleSubmitWithValidation} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <TextField
           name="firstName"
           label="Имя"
-          value={formData.firstName}
-          onChange={handleChange}
+          value={formik.values.firstName}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.firstName && Boolean(formik.errors.firstName)}
+          helperText={formik.touched.firstName && formik.errors.firstName}
           required
           fullWidth
           variant="outlined"
           size="small"
+          inputProps={{
+            minLength: validationRules?.minNameLength || 2,
+            maxLength: validationRules?.maxNameLength || 50,
+            pattern: "^[a-zA-Zа-яА-ЯёЁ\\s-]+$",
+            title: "Только буквы и дефис"
+          }}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '&.Mui-error fieldset': {
+                borderColor: 'error.main',
+                borderWidth: 2,
+              },
+            },
+          }}
         />
         
         <TextField
           name="lastName"
           label="Фамилия"
-          value={formData.lastName}
-          onChange={handleChange}
+          value={formik.values.lastName}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.lastName && Boolean(formik.errors.lastName)}
+          helperText={formik.touched.lastName && formik.errors.lastName}
           required
           fullWidth
           variant="outlined"
           size="small"
+          inputProps={{
+            minLength: validationRules?.minNameLength || 2,
+            maxLength: validationRules?.maxNameLength || 50,
+            pattern: "^[a-zA-Zа-яА-ЯёЁ\\s-]+$",
+            title: "Только буквы и дефис"
+          }}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '&.Mui-error fieldset': {
+                borderColor: 'error.main',
+                borderWidth: 2,
+              },
+            },
+          }}
         />
         
         <TextField
           name="email"
           type="email"
           label="Email"
-          value={formData.email}
-          onChange={handleChange}
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.email && Boolean(formik.errors.email)}
+          helperText={formik.touched.email && formik.errors.email}
           required
           fullWidth
           variant="outlined"
           size="small"
+          inputProps={{
+            pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+            title: "Допустимые домены: gmail.com, mail.ru, yandex.ru"
+          }}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '&.Mui-error fieldset': {
+                borderColor: 'error.main',
+                borderWidth: 2,
+              },
+            },
+          }}
+        />
+        
+        <TextField
+          name="appointmentTime"
+          type="time"
+          label="Время приема"
+          value={formik.values.appointmentTime}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.appointmentTime && Boolean(formik.errors.appointmentTime)}
+          helperText={formik.touched.appointmentTime && formik.errors.appointmentTime || "Рабочее время: 8:30-11:30, 12:30-16:00"}
+          required
+          fullWidth
+          variant="outlined"
+          size="small"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          inputProps={{
+            step: 300, // 5 минут
+          }}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '&.Mui-error fieldset': {
+                borderColor: 'error.main',
+                borderWidth: 2,
+              },
+            },
+          }}
         />
         
         <Button
@@ -186,12 +255,12 @@ const AddUserForm = ({ onSubmit }) => {
           variant="contained"
           color="primary"
           fullWidth
+          disabled={formik.isSubmitting}
         >
           Добавить пользователя
         </Button>
       </Box>
     </Paper>
->>>>>>> 07d062e (MUI темами)
   );
 };
 

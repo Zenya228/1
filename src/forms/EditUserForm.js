@@ -1,187 +1,184 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
-import { useSelector } from 'react-redux';
-=======
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import {
   Box,
   TextField,
   Button,
   Grid,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
->>>>>>> 07d062e (MUI темами)
+
+const ValidationService = {
+  getValidationRules: () => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          minNameLength: 2,
+          maxNameLength: 50,
+          emailDomains: ['gmail.com', 'mail.ru', 'yandex.ru'],
+          businessHours: {
+            morning: { start: '08:30', end: '11:30' },
+            afternoon: { start: '12:30', end: '16:00' }
+          }
+        });
+      }, 300);
+    });
+  }
+};
 
 const EditUserForm = ({ user, onSubmit, onCancel }) => {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: ''
+  const [validationRules, setValidationRules] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const loadRules = async () => {
+      setLoading(true);
+      try {
+        const rules = await ValidationService.getValidationRules();
+        setValidationRules(rules);
+      } catch (error) {
+        console.error('Ошибка загрузки правил валидации:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadRules();
+  }, []);
+
+  const validationSchema = React.useMemo(() => {
+    if (!validationRules) return Yup.object({});
+    
+    return Yup.object({
+      firstName: Yup.string()
+        .min(validationRules.minNameLength, `Минимум ${validationRules.minNameLength} символа`)
+        .max(validationRules.maxNameLength, `Максимум ${validationRules.maxNameLength} символов`)
+        .required('Обязательное поле'),
+      
+      lastName: Yup.string()
+        .min(validationRules.minNameLength, `Минимум ${validationRules.minNameLength} символа`)
+        .max(validationRules.maxNameLength, `Максимум ${validationRules.maxNameLength} символов`)
+        .required('Обязательное поле'),
+      
+      email: Yup.string()
+        .email('Некорректный email')
+        .required('Обязательное поле')
+        .test('domain-check', 'Допустимые домены: gmail.com, mail.ru, yandex.ru', (value) => {
+          if (!value) return true;
+          const domain = value.split('@')[1];
+          return validationRules.emailDomains.includes(domain);
+        }),
+      
+      appointmentTime: Yup.string()
+        .required('Выберите время приема')
+        .test('business-hours', 'Рабочее время: 8:30-11:30 или 12:30-16:00', (value) => {
+          if (!value) return false;
+          const time = value;
+          const { morning, afternoon } = validationRules.businessHours;
+          return (time >= morning.start && time <= morning.end) || 
+                 (time >= afternoon.start && time <= afternoon.end);
+        })
+    });
+  }, [validationRules]);
+
+  const formik = useFormik({
+    initialValues: {
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      email: user?.email || '',
+      appointmentTime: user?.appointmentTime || '',
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      onSubmit(user.id, values);
+    },
+    enableReinitialize: true,
   });
 
-<<<<<<< HEAD
-  const { colors } = useSelector(state => state.theme);
-
-=======
->>>>>>> 07d062e (MUI темами)
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email
-      });
-    }
-  }, [user]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(user.id, formData);
-  };
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
-<<<<<<< HEAD
-    <form onSubmit={handleSubmit}>
-      <div className="form-group" style={{ marginBottom: '15px' }}>
-        <label style={{display: 'block', marginBottom: '5px', fontSize: '14px', color: colors.heading, fontWeight: 'bold'}}>
-          Имя:
-        </label>
-        <input
-          type="text"
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleChange}
-          required
-          style={{
-            width: '100%',
-            padding: '10px',
-            border: `1px solid ${colors.border}`,
-            borderRadius: '5px',
-            fontSize: '16px',
-            boxSizing: 'border-box',
-            backgroundColor: colors.surface,
-            color: colors.text
-          }}
-        />
-      </div>
-      <div className="form-group" style={{ marginBottom: '15px' }}>
-        <label style={{display: 'block', marginBottom: '5px', fontSize: '14px', color: colors.heading, fontWeight: 'bold'}}>
-          Фамилия:
-        </label>
-        <input
-          type="text"
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleChange}
-          required
-          style={{
-            width: '100%',
-            padding: '10px',
-            border: `1px solid ${colors.border}`,
-            borderRadius: '5px',
-            fontSize: '16px',
-            boxSizing: 'border-box',
-            backgroundColor: colors.surface,
-            color: colors.text
-          }}
-        />
-      </div>
-      <div className="form-group" style={{ marginBottom: '15px' }}>
-        <label style={{display: 'block', marginBottom: '5px', fontSize: '14px', color: colors.heading, fontWeight: 'bold'}}>
-          Email:
-        </label>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          style={{
-            width: '100%',
-            padding: '10px',
-            border: `1px solid ${colors.border}`,
-            borderRadius: '5px',
-            fontSize: '16px',
-            boxSizing: 'border-box',
-            backgroundColor: colors.surface,
-            color: colors.text
-          }}
-        />
-      </div>
-      <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-        <button type="submit" className="save-btn" style={{
-          flex: 1,
-          backgroundColor: colors.secondary,
-          color: colors.buttonText,
-          border: 'none',
-          padding: '12px',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          fontSize: '16px',
-          fontWeight: 'bold'
-        }}>
-          Сохранить
-        </button>
-        <button 
-          type="button" 
-          className="cancel-btn"
-          onClick={onCancel}
-          style={{
-            flex: 1,
-            backgroundColor: colors.error,
-            color: colors.buttonText,
-            border: 'none',
-            padding: '12px',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontSize: '16px',
-            fontWeight: 'bold'
-          }}
-        >
-          Отмена
-        </button>
-      </div>
-    </form>
-=======
-    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+    <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
+      {validationRules && (
+        <Alert severity="info" sx={{ mb: 2 }}>
+          Правила валидации загружены
+        </Alert>
+      )}
+      
       <TextField
         name="firstName"
         label="Имя"
-        value={formData.firstName}
-        onChange={handleChange}
+        value={formik.values.firstName}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.touched.firstName && Boolean(formik.errors.firstName)}
+        helperText={formik.touched.firstName && formik.errors.firstName}
         required
         fullWidth
         margin="normal"
         variant="outlined"
+        inputProps={{
+          minLength: validationRules?.minNameLength || 2,
+          maxLength: validationRules?.maxNameLength || 50,
+        }}
       />
       
       <TextField
         name="lastName"
         label="Фамилия"
-        value={formData.lastName}
-        onChange={handleChange}
+        value={formik.values.lastName}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.touched.lastName && Boolean(formik.errors.lastName)}
+        helperText={formik.touched.lastName && formik.errors.lastName}
         required
         fullWidth
         margin="normal"
         variant="outlined"
+        inputProps={{
+          minLength: validationRules?.minNameLength || 2,
+          maxLength: validationRules?.maxNameLength || 50,
+        }}
       />
       
       <TextField
         name="email"
         type="email"
         label="Email"
-        value={formData.email}
-        onChange={handleChange}
+        value={formik.values.email}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.touched.email && Boolean(formik.errors.email)}
+        helperText={formik.touched.email && formik.errors.email}
         required
         fullWidth
         margin="normal"
         variant="outlined"
+      />
+      
+      <TextField
+        name="appointmentTime"
+        type="time"
+        label="Время приема"
+        value={formik.values.appointmentTime}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.touched.appointmentTime && Boolean(formik.errors.appointmentTime)}
+        helperText={formik.touched.appointmentTime && formik.errors.appointmentTime || "8:30-11:30, 12:30-16:00"}
+        required
+        fullWidth
+        margin="normal"
+        variant="outlined"
+        InputLabelProps={{ shrink: true }}
+        inputProps={{ step: 300 }}
       />
       
       <Grid container spacing={2} sx={{ mt: 3 }}>
@@ -192,6 +189,7 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
             color="primary"
             fullWidth
             size="large"
+            disabled={!formik.isValid || formik.isSubmitting}
           >
             Сохранить
           </Button>
@@ -210,7 +208,6 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
         </Grid>
       </Grid>
     </Box>
->>>>>>> 07d062e (MUI темами)
   );
 };
 
